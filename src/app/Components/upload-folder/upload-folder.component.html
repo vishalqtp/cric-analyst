@@ -1,0 +1,11 @@
+<h2>Upload Folder</h2>
+
+<input
+  type="file"
+  (change)="onFilesSelected($event)"
+  webkitdirectory
+  directory
+  multiple
+/>
+
+<button (click)="uploadFiles()">Upload</button>

@@ -1,0 +1,443 @@
+
+
+<div class="upload-section">
+  <h3>Upload Match JSON Files</h3>
+  <input type="file" (change)="onFilesSelected($event)" multiple webkitdirectory directory />
+  <button (click)="uploadFiles()" [disabled]="uploading">Upload</button>
+  <span class="message">{{uploadMessage}}</span>
+</div>
+
+<!-- <button (click)="checkLowPartnershipFailures()">Check Low Partnerships</button>
+<BR>
+  <BR> -->
+
+<!-- Filter section for browsing matches -->
+
+<nav class="top-nav">
+  <div class="nav-left">
+    <h1 class="site-title">Cricket Analytics Dashboard</h1>
+  </div>
+  <div class="nav-right">
+    <button class="btn btn-primary" (click)="openPartnershipFailures()">Check Partnership Failures</button>
+      <button class="btn btn-warning" (click)="openLowWicketFailures()" style="margin-left: 10px;">Check Low Wicket Runs Failures</button>
+  </div>
+</nav>
+
+
+<!-- Then rest of your existing content -->
+
+<div class="filter-section">
+  <!-- your existing filters and browse matches here -->
+</div>
+
+
+<div class="filter-section">
+  <h3 class="filter-heading">Browse Matches</h3>
+
+  <div class="filter-grid">
+    <div class="filter-group">
+      <label for="tournament">Tournament</label>
+      <select id="tournament" [(ngModel)]="selectedTournamentId" (change)="onTournamentChange()">
+        <option [ngValue]="null" disabled selected>Select Tournament</option>
+        <option *ngFor="let t of tournaments" [value]="t.id">{{ t.name }}</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label for="year">Year</label>
+      <select id="year" [(ngModel)]="selectedYear" (change)="onYearChange()" [disabled]="!selectedTournamentId">
+        <option [ngValue]="null" disabled selected>Select Year</option>
+        <option *ngFor="let y of years" [value]="y">{{ y }}</option>
+      </select>
+    </div>
+
+    
+    <div class="filter-group">
+      <label for="team">Team</label>
+      <select id="team" [(ngModel)]="selectedTeam" (change)="applyMatchFilters()" [disabled]="!selectedYear">
+        <option value="">All</option>
+        <option *ngFor="let t of availableTeams" [value]="t">{{ t }}</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label for="venue">Venue</label>
+      <select id="venue" [(ngModel)]="selectedVenue" (change)="applyMatchFilters()" [disabled]="!selectedYear">
+        <option value="">All</option>
+        <option *ngFor="let v of availableVenues" [value]="v">{{ v }}</option>
+      </select>
+    </div>
+
+  
+
+    <div class="filter-group">
+      <label for="match">Match</label>
+      <select id="match" [(ngModel)]="selectedMatchId" (change)="onMatchChange()" [disabled]="!selectedYear">
+        <option [ngValue]="null" disabled selected>Select Match</option>
+        <option *ngFor="let m of matches" [value]="m.id">
+          {{ m.teams ? (m.teams[0] + ' vs ' + m.teams[1]) : m.matchId }}
+        </option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label for="viewType">View Type</label>
+      <select id="viewType" [(ngModel)]="selectedViewType" (change)="onViewTypeChange()" [disabled]="!selectedMatchId">
+<option [ngValue]="null" disabled>Select View</option>
+        <option value="partnership">Partnership</option>
+        <option value="scorecard">Scorecard</option>
+      </select>
+    </div>
+
+   
+
+  </div>
+</div>
+
+
+
+<!-- Full width centered match summary if NOT partnership view -->
+<div *ngIf="matchDetails && selectedViewType !== 'partnership'" class="match-summary-centered">
+  <div class="match-summary-card">
+    <div class="teams">
+      <div class="team">{{ matchDetails.info.teams[0] }}</div>
+      <div class="vs">vs</div>
+      <div class="team">{{ matchDetails.info.teams[1] }}</div>
+    </div>
+
+    <div class="team-scores">
+  <div class="score-box">
+    <p *ngFor="let score of getTeamScores(); let i = index" [ngClass]="{ 'team-a': i === 0, 'team-b': i === 1 }">
+      {{ score }}
+    </p>
+  </div>
+</div>
+
+
+    <div class="match-result" [ngClass]="{'win': isWinner(), 'loss': !isWinner()}">
+      {{ matchResult }}
+    </div>
+
+    <div class="match-info">
+      <p><strong>Venue:</strong> {{ matchDetails.info.venue }}, {{ matchDetails.info.city }}</p>
+      <p><strong>Date:</strong> {{ matchDetails.info.dates[0] | date: 'd MMM yyyy' }}</p>
+      <p><strong>Toss:</strong> {{ matchDetails.info.toss.winner }} chose to {{ matchDetails.info.toss.decision }}</p>
+      <p><strong>Overs:</strong> {{ matchDetails.info.overs }} overs</p>
+    </div>
+  </div>
+</div>
+
+<!-- Side-by-side match summary + partnerships when partnership view -->
+<div *ngIf="matchDetails && selectedViewType === 'partnership'" class="side-by-side-container">
+  <div class="left-column">
+    <div class="match-summary-card compact">
+      <div class="teams">
+        <div class="team">{{ matchDetails.info.teams[0] }}</div>
+        <div class="vs">vs</div>
+        <div class="team">{{ matchDetails.info.teams[1] }}</div>
+      </div>
+     
+
+  <div class="team-scores">
+  <div class="score-box">
+    <p *ngFor="let score of getTeamScores(); let i = index" [ngClass]="{ 'team-a': i === 0, 'team-b': i === 1 }">
+      {{ score }}
+    </p>
+  </div>
+</div>
+      <div class="match-result" [ngClass]="{'win': isWinner(), 'loss': !isWinner()}">
+        {{ matchResult }}
+      </div>
+
+      <div class="match-info">
+        <p><strong>Venue:</strong> {{ matchDetails.info.venue }}, {{ matchDetails.info.city }}</p>
+        <p><strong>Date:</strong> {{ matchDetails.info.dates[0] | date: 'd MMM yyyy' }}</p>
+        <p><strong>Toss:</strong> {{ matchDetails.info.toss.winner }} chose to {{ matchDetails.info.toss.decision }}</p>
+        <p><strong>Overs:</strong> {{ matchDetails.info.overs }} overs</p>
+      </div>
+
+     
+    </div>
+
+    <!-- Partnership Summary BELOW match summary in left column -->
+    <div class="partnership-summary-left">
+      <h3>Partnership Summary</h3>
+      <hr />
+      <div class="partnership-summary-items">
+        <div *ngFor="let key of [20, 25, 30, 35, 40, 45, 50]">
+          {{ key }}+ runs partnership: {{ partnershipSummary[key] || 0 }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="right-column">
+    <div class="partnership-section">
+      <h3>Partnership Tracker</h3>
+      <div class="inning-selector">
+  <label for="inningDropdown"><strong>Select Inning:</strong></label>
+  <select id="inningDropdown" [(ngModel)]="selectedInningIndex" (change)="generatePartnerships()">
+    <option *ngFor="let inn of availableInnings; let idx = index" [value]="idx">{{ inn }}</option>
+  </select>
+</div>
+      <table class="partnership-table" role="table" aria-label="Partnerships">
+    
+
+        <thead>
+          <tr>
+            <th>Wicket</th>
+            <th>Batsmen</th>
+            <th>Runs (Balls)</th>
+            <th>Fall Over</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let p of partnerships; let i = index" [class.milestone]="p.runs >= 24">
+            <td>{{ getWicketLabel(i) }}</td>
+            <td>{{ p.batsmen }}</td>
+            <td>{{ p.runs }} ({{ p.balls }})</td>
+            <td>{{ p.fallOver }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  
+
+  <div *ngIf="showFailurePopup" class="modal-overlay">
+  <div class="modal-content">
+    <h2>Partnership Failures</h2>
+    <div *ngIf="failureMatches.length === 0">
+      <p>No failures found for selected tournament & year.</p>
+    </div>
+    <div *ngFor="let match of failureMatches">
+      <h3>
+        {{ match.matchName }} - {{ match.venue }} (Inning {{ match.inning }})
+                </h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Wicket</th>
+            <th>Batsmen</th>
+            <th>Runs</th>
+            <th>Fall Over</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let p of match.partnerships">
+            <td>{{ p.wicket }}</td>
+            <td>{{ p.batsmen }}</td>
+            <td>{{ p.runs }}</td>
+            <td>{{ p.fallOver }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <button (click)="showFailurePopup = false">Close</button>
+  </div>
+</div>
+</div>
+
+
+
+
+<div *ngIf="showFailurePopup" class="modal-overlay">
+  <div class="modal-content">
+    <div class="modal-header">
+  <div>
+    <h2>Partnership Failures</h2>
+    <p class="modal-subtitle">
+      Tournament: {{ selectedTournamentName }} | Year: {{ selectedYear || 'N/A' }}
+    </p>
+  </div>
+  <button type="button" class="modal-close-btn" aria-label="Close" (click)="showFailurePopup = false">×</button>
+</div>
+
+    <div class="modal-body">
+      
+<div class="failure-summary">
+  <div class="summary-item">
+    <span class="label">Total Matches</span>
+    <span class="value">{{ allMatches.length || 0 }}</span>
+  </div>
+  <div class="summary-item">
+    <span class="label">Failures</span>
+    <span class="value">{{ failureMatches.length }}</span>
+  </div>
+  <div class="summary-item">
+    <span class="label">1st Inn.</span>
+    <span class="value">{{ countFailuresByInning(1) }}</span>
+  </div>
+  <div class="summary-item">
+    <span class="label">2nd Inn.</span>
+    <span class="value">{{ countFailuresByInning(2) }}</span>
+  </div>
+  <div class="summary-item">
+    <span class="label">Failure %</span>
+    <span class="value">{{ ((failureMatches.length / (allMatches.length || 1)) * 100) | number:'1.0-2' }}%</span>
+  </div>
+</div>
+<div class="failure-extra-summary" *ngIf="failureMatches.length > 0">
+  <div class="summary-section venue-section">
+    <h4>Failure Venues</h4>
+    <ul>
+      <li *ngFor="let venue of venueFailuresKeys()">
+        <span class="label">{{ venue }}</span>
+        <span class="value">
+          {{ venueFailuresCount[venue] }} match{{ venueFailuresCount[venue] > 1 ? 'es' : '' }}
+        </span>
+      </li>
+    </ul>
+  </div>
+
+  <div class="summary-section team-section">
+    <h4>Teams Collapsed</h4>
+    <ul>
+      <li *ngFor="let team of teamFailuresKeys()">
+        <span class="label">{{ team }}</span>
+        <span class="value">
+          {{ teamFailuresCount[team] }} match{{ teamFailuresCount[team] > 1 ? 'es' : '' }}
+        </span>
+      </li>
+    </ul>
+  </div>
+</div>
+
+
+
+<h2 class="failure-details-heading">Match Failure Details</h2>
+
+
+      <div *ngFor="let match of failureMatches" class="failure-match">
+<h3 class="failure-match-heading">
+    {{ match.matchName }} - {{ match.venue }} (Inning {{ match.inning }})
+  </h3>    
+<p class="batting-team-label">
+  Batting Team: <span>{{ match.collapsedTeam }}</span>
+</p>
+
+  <table class="failure-table">
+          <thead>
+            <tr>
+              <th>Wicket</th>
+              <th>Batsmen</th>
+              <th>Runs</th>
+              <th>Fall Over</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let p of match.partnerships">
+              <td>{{ p.wicket }}</td>
+              <td>{{ p.batsmen }}</td>
+              <td>{{ p.runs }}</td>
+              <td>{{ p.fallOver }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<div *ngIf="showLowWicketFailurePopup" class="modal-overlay">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Low Wicket Runs Failures</h2>
+      <button class="modal-close-btn" aria-label="Close modal" (click)="showLowWicketFailurePopup = false">×</button>
+    </div>
+
+    <div class="modal-body">
+      <div class="failure-summary">
+        <div class="summary-item">
+          <span class="label">Total Matches</span>
+          <span class="value">{{ allMatches.length || 0 }}</span>
+        </div>
+        <div class="summary-item">
+          <span class="label">Failures</span>
+          <span class="value">{{ lowWicketFailureMatches.length }}</span>
+        </div>
+        <div class="summary-item">
+          <span class="label">1st Inn.</span>
+          <span class="value">{{ countLowWicketFailuresByInning(1) }}</span>
+        </div>
+        <div class="summary-item">
+          <span class="label">2nd Inn.</span>
+          <span class="value">{{ countLowWicketFailuresByInning(2) }}</span>
+        </div>
+        <div class="summary-item">
+          <span class="label">Failure %</span>
+          <span class="value">{{ ((lowWicketFailureMatches.length / (allMatches.length || 1)) * 100) | number:'1.0-2' }}%</span>
+        </div>
+      </div>
+
+      <div class="failure-extra-summary" *ngIf="lowWicketFailureMatches.length > 0">
+        <div class="summary-section venue-section">
+          <h4>Failure Venues</h4>
+          <ul>
+            <li *ngFor="let venue of lowWicketVenueFailuresKeys()">
+              <span class="label">{{ venue }}</span>
+              <span class="value">
+                {{ lowWicketVenueFailuresCount[venue] }} match{{ lowWicketVenueFailuresCount[venue] > 1 ? 'es' : '' }}
+              </span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="summary-section team-section">
+          <h4>Teams Collapsed</h4>
+          <ul>
+            <li *ngFor="let team of lowWicketTeamFailuresKeys()">
+              <span class="label">{{ team }}</span>
+              <span class="value">
+                {{ lowWicketTeamFailuresCount[team] }} match{{ lowWicketTeamFailuresCount[team] > 1 ? 'es' : '' }}
+              </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <h2 class="failure-details-heading">Match Failure Details</h2>
+
+      <div *ngFor="let match of lowWicketFailureMatches" class="failure-match">
+        <h3 class="failure-match-heading">
+          {{ match.matchName }} - {{ match.venue }} (Inning {{ match.inning }})
+        </h3>
+
+        <p><strong>Batting Team:</strong> {{ match.collapsedTeam }}</p>
+
+        <table class="failure-table">
+          <thead>
+            <tr>
+              <th>Wicket</th>
+              <th>Batsmen</th>
+              <th>Runs</th>
+              <th>Fall Over</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let p of match.partnerships">
+              <td>{{ p.wicket }}</td>
+              <td>{{ p.batsmen }}</td>
+              <td>{{ p.runs }}</td>
+              <td>{{ p.fallOver }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Custom Alert Popup -->
+<div *ngIf="showAlert" class="custom-alert-overlay">
+  <div class="custom-alert-box">
+    <h3 class="alert-heading">Warning</h3>
+    <p class="alert-message">{{ alertMessage }}</p>
+    <button class="alert-ok-btn" (click)="closeAlert()">OK</button>
+  </div>
+</div>
+
