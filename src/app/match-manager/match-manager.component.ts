@@ -17,6 +17,10 @@ import { MatchService, Tournament, MatchSummary } from './match.service';
 
 export class MatchManagerComponent implements OnInit {
   selectedFiles: File[] = [];
+  uploading = false;
+  uploadMessage = '';
+  showUploadModal = false;
+  uploadProgress = 0;
   matchResult: string = '';
   tournaments: Tournament[] = [];
   years: string[] = [];               // years as string[], matching API response
@@ -51,8 +55,7 @@ alertMessage = '';
 
   matchDetails: any = null;
 
-  uploading = false;
-  uploadMessage = '';
+ 
 
   expandedFailures = new Set<number>();
 isFullScreen = false;
@@ -60,6 +63,7 @@ showLowWicketFailurePopup = false;
 lowWicketFailureMatches: any[] = [];
 lowWicketVenueFailuresCount: { [venue: string]: number } = {};
 lowWicketTeamFailuresCount: { [team: string]: number } = {};
+
 
   constructor(private matchService: MatchService) {}
 
@@ -85,43 +89,127 @@ getTeamDisplayName(teamName: string, collapsedTeam: string): string {
   return teamName;
 }
 
-  uploadFiles() {
-  if (this.selectedFiles.length === 0) {
-    alert('Please select files first.');
-    return;
+
+toggleUploadModal() {
+    this.showUploadModal = !this.showUploadModal;
+    if (!this.showUploadModal) {
+      this.resetUploadState();
+    }
   }
 
-  const batchSize = 20; // number of files per batch - adjust as needed
-  const totalFiles = this.selectedFiles.length;
-  let uploadedCount = 0;
-  this.uploading = true;
-  this.uploadMessage = '';
-  const uploadBatch = (batchFiles: File[]) => {
-    const formData = new FormData();
-    batchFiles.forEach(file => formData.append('files', file, file.name));
-    return this.matchService.uploadMatches(formData).toPromise();
-  };
-  const uploadAllBatches = async () => {
-    try {
-      for (let i = 0; i < totalFiles; i += batchSize) {
-        const batchFiles = this.selectedFiles.slice(i, i + batchSize);
-        await uploadBatch(batchFiles);
+  closeUploadModal() {
+    this.showUploadModal = false;
+    this.resetUploadState();
+  }
 
-        uploadedCount += batchFiles.length;
-        this.uploadMessage = `Uploaded ${uploadedCount} of ${totalFiles} files...`;
-      }
+  private resetUploadState() {
+    this.selectedFiles = [];
+    this.uploading = false;
+    this.uploadMessage = '';
+    this.uploadProgress = 0;
+  }
 
-      this.uploadMessage = 'Upload successful for all files!';
-      this.loadTournaments();  // refresh after upload
-    } catch (err) {
-      this.uploadMessage = 'Upload failed during batch upload.';
-    } finally {
-      this.uploading = false;
+  // File selection method
+  // onFilesSelected(event: any) {
+  //   const files: FileList = event.target.files;
+  //   this.selectedFiles = Array.from(files);
+  //   this.uploadMessage = '';
+  // }
+
+  // Enhanced upload method with progress tracking
+  uploadFiles() {
+    if (this.selectedFiles.length === 0) {
+      this.uploadMessage = 'Please select files first.';
+      return;
     }
-  };
 
-  uploadAllBatches();
-}
+    const batchSize = 20;
+    const totalFiles = this.selectedFiles.length;
+    let uploadedCount = 0;
+    this.uploading = true;
+    this.uploadMessage = '';
+    this.uploadProgress = 0;
+
+    const uploadBatch = (batchFiles: File[]) => {
+      const formData = new FormData();
+      batchFiles.forEach(file => formData.append('files', file, file.name));
+      return this.matchService.uploadMatches(formData).toPromise();
+    };
+
+    const uploadAllBatches = async () => {
+      try {
+        const totalBatches = Math.ceil(totalFiles / batchSize);
+        
+        for (let i = 0; i < totalFiles; i += batchSize) {
+          const batchFiles = this.selectedFiles.slice(i, i + batchSize);
+          await uploadBatch(batchFiles);
+
+          uploadedCount += batchFiles.length;
+          this.uploadProgress = Math.round((uploadedCount / totalFiles) * 100);
+          this.uploadMessage = `Uploaded ${uploadedCount} of ${totalFiles} files...`;
+          
+          // Small delay to show progress
+          if (i + batchSize < totalFiles) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+          }
+        }
+
+        this.uploadMessage = 'Upload successful for all files!';
+        this.uploadProgress = 100;
+        this.loadTournaments(); // refresh after upload
+        
+        // Auto close modal after success
+        setTimeout(() => {
+          this.closeUploadModal();
+        }, 2000);
+
+      } catch (err) {
+        this.uploadMessage = 'Upload failed during batch upload.';
+        console.error('Upload error:', err);
+      } finally {
+        this.uploading = false;
+      }
+    };
+
+    uploadAllBatches();
+  }
+//   uploadFiles() {
+//   if (this.selectedFiles.length === 0) {
+//     alert('Please select files first.');
+//     return;
+//   }
+
+//   const batchSize = 20; // number of files per batch - adjust as needed
+//   const totalFiles = this.selectedFiles.length;
+//   let uploadedCount = 0;
+//   this.uploading = true;
+//   this.uploadMessage = '';
+//   const uploadBatch = (batchFiles: File[]) => {
+//     const formData = new FormData();
+//     batchFiles.forEach(file => formData.append('files', file, file.name));
+//     return this.matchService.uploadMatches(formData).toPromise();
+//   };
+//   const uploadAllBatches = async () => {
+//     try {
+//       for (let i = 0; i < totalFiles; i += batchSize) {
+//         const batchFiles = this.selectedFiles.slice(i, i + batchSize);
+//         await uploadBatch(batchFiles);
+
+//         uploadedCount += batchFiles.length;
+//         this.uploadMessage = `Uploaded ${uploadedCount} of ${totalFiles} files...`;
+//       }
+
+//       this.uploadMessage = 'Upload successful for all files!';
+//       this.loadTournaments();  // refresh after upload
+//     } catch (err) {
+//       this.uploadMessage = 'Upload failed during batch upload.';
+//     } finally {
+//       this.uploading = false;
+//     }
+//   };
+
+//   uploadAllBatches();
+// }
 
   loadTournaments() {
     this.matchService.getTournaments().subscribe(data => {
