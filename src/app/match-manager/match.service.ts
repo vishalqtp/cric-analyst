@@ -25,8 +25,7 @@ export interface MatchSummary {
 })
 export class MatchService {
   // private baseUrl = 'http://localhost:5017/api/Match';  // Match controller route casing
-
-  private baseUrl = 'http://localhost:3000/api/match';
+  private baseUrl = 'https://cric-analyst-backend.onrender.com/api/match';
     // private folderUrl = 'http://localhost:3000/api';
 
 
