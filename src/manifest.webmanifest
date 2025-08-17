@@ -1,6 +1,6 @@
 {
-  "name": "ClientApp",
-  "short_name": "ClientApp",
+  "name": "Cricket Analytics",
+  "short_name": "CA",
   "theme_color": "#1976d2",
   "background_color": "#fafafa",
   "display": "standalone",
