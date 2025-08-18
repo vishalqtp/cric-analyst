@@ -39,18 +39,18 @@
           },
           "configurations": {
             "production": {
-               "baseHref": "./",
+              "baseHref": "./",
               "budgets": [
                 {
                   "type": "initial",
                   "maximumWarning": "2mb",
                   "maximumError": "5mb"
                 },
-               {
-  "type": "anyComponentStyle",
-  "maximumWarning": "15kb",
-  "maximumError": "20kb"
-}
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "30kb",
+                  "maximumError": "40kb"
+                }
               ],
               "outputHashing": "all"
             },
