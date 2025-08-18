@@ -19,6 +19,7 @@ export class MatchManagerComponent implements OnInit {
   selectedFiles: File[] = [];
   uploading = false;
   uploadMessage = '';
+  mobileMenuOpen: boolean = false; 
   showUploadModal = false;
   uploadProgress = 0;
   matchResult: string = '';
@@ -52,12 +53,8 @@ alertMessage = '';
   selectedTournamentId: string | null = null;
   selectedYear: string | null = null;
   selectedMatchId: number | null = null;   // match ID as number
-
   matchDetails: any = null;
-
- 
-
-  expandedFailures = new Set<number>();
+expandedFailures = new Set<number>();
 isFullScreen = false;
 showLowWicketFailurePopup = false;
 lowWicketFailureMatches: any[] = [];
@@ -173,43 +170,6 @@ toggleUploadModal() {
 
     uploadAllBatches();
   }
-//   uploadFiles() {
-//   if (this.selectedFiles.length === 0) {
-//     alert('Please select files first.');
-//     return;
-//   }
-
-//   const batchSize = 20; // number of files per batch - adjust as needed
-//   const totalFiles = this.selectedFiles.length;
-//   let uploadedCount = 0;
-//   this.uploading = true;
-//   this.uploadMessage = '';
-//   const uploadBatch = (batchFiles: File[]) => {
-//     const formData = new FormData();
-//     batchFiles.forEach(file => formData.append('files', file, file.name));
-//     return this.matchService.uploadMatches(formData).toPromise();
-//   };
-//   const uploadAllBatches = async () => {
-//     try {
-//       for (let i = 0; i < totalFiles; i += batchSize) {
-//         const batchFiles = this.selectedFiles.slice(i, i + batchSize);
-//         await uploadBatch(batchFiles);
-
-//         uploadedCount += batchFiles.length;
-//         this.uploadMessage = `Uploaded ${uploadedCount} of ${totalFiles} files...`;
-//       }
-
-//       this.uploadMessage = 'Upload successful for all files!';
-//       this.loadTournaments();  // refresh after upload
-//     } catch (err) {
-//       this.uploadMessage = 'Upload failed during batch upload.';
-//     } finally {
-//       this.uploading = false;
-//     }
-//   };
-
-//   uploadAllBatches();
-// }
 
   loadTournaments() {
     this.matchService.getTournaments().subscribe(data => {
@@ -515,91 +475,6 @@ checkLowPartnershipFailures() {
   console.log(`Second Innings Failures: ${secondInningsFailures}`);
 }
 
-
-// openPartnershipFailures() {
-//    if (!this.selectedTournamentId || !this.selectedYear) {
-
-//     this.showAlert = true;
-//     this.alertMessage = 'Please select tournament and year to check partnership failure record.';
-//     this.showAlert = true;
-//     //  alert('Please select tournament and year to check partnership failure record.');
-//     return;
-//   }
-//    this.showFailurePopup = true;
-//   console.log('showFailurePopup:', this.showFailurePopup);
-
-//   console.log('openPartnershipFailures called');
-//   if (!this.allMatches || this.allMatches.length === 0) {
-//     alert('Please select a tournament and year first.');
-//     return;
-//   }
-
-//   this.failureMatches = [];
-//   console.log('Total matches:', this.allMatches.length);
-
-//   this.allMatches.forEach((match, matchIndex) => {
-//     console.log(`Processing match ${matchIndex + 1}:`, match);
-//     if (!match.jsonData) {
-//       console.warn('No jsonData for this match:', match);
-//       return;
-//     }
-
-//     try {
-//       const parsed = JSON.parse(match.jsonData);
-//       console.log('Parsed match JSON:', parsed);
-
-//       (parsed.innings || []).forEach((inning: any, index: number) => {
-//         let partnerships: any[] = [];
-//         let runs = 0, balls = 0, batsmen = '', fallOver = '';
-
-//         inning.overs.forEach((over: any) => {
-//           over.deliveries.forEach((delivery: any, ballIndex: number) => {
-//             if (runs === 0 && balls === 0) {
-//               batsmen = `${delivery.batter} - ${delivery.non_striker}`;
-//             }
-//             runs += delivery.runs?.total || 0;
-//             balls++;
-//             if (delivery.wickets && delivery.wickets.length > 0) {
-//               fallOver = `${over.over}.${ballIndex + 1}`;
-//               partnerships.push({ wicket: partnerships.length + 1, batsmen, runs, balls, fallOver });
-//               runs = 0;
-//               balls = 0;
-//             }
-//           });
-//         });
-
-//         if (runs > 0) {
-//           partnerships.push({ wicket: partnerships.length + 1, batsmen, runs, balls, fallOver: 'N/A' });
-//         }
-
-//         const topFive = partnerships.slice(0, 5);
-//         const hasGoodPartnership = topFive.some(p => p.runs >= 25);
-
-//         if (!hasGoodPartnership && topFive.length === 5) {
-//           console.log('Adding failure match:', {
-//             matchName: parsed.info?.teams?.join(' vs '),
-//             venue: parsed.info?.venue || '',
-//             inning: index + 1,
-//             partnerships: topFive
-//           });
-
-//           this.failureMatches.push({
-//             matchName: parsed.info?.teams?.join(' vs '),
-//             venue: parsed.info?.venue || '',
-//             inning: index + 1,
-//             partnerships: topFive
-//           });
-//         }
-//       });
-//     } catch (err) {
-//       console.error('Error parsing match JSON:', err);
-//     }
-//   });
-
-//   console.log('Total failureMatches found:', this.failureMatches.length);
-//   this.showFailurePopup = true;
-// }
-
 openPartnershipFailures() {
   if (!this.selectedTournamentId || !this.selectedYear) {
     this.showAlert = true;
@@ -676,83 +551,6 @@ openPartnershipFailures() {
 
   this.showFailurePopup = true;
 }
-
-// openLowWicketFailures() {
-//   if (!this.selectedTournamentId || !this.selectedYear) {
-//     this.showAlert = true;
-//     this.alertMessage = 'Please select tournament and year to check low wicket runs failure record.';
-//     return;
-//   }
-
-//   if (!this.allMatches || this.allMatches.length === 0) {
-//     alert('Please select a tournament and year first.');
-//     return;
-//   }
-
-//   this.lowWicketFailureMatches = [];
-//   this.lowWicketVenueFailuresCount = {};
-//   this.lowWicketTeamFailuresCount = {};
-
-//   this.allMatches.forEach(match => {
-//     if (!match.jsonData) return;
-
-//     try {
-//       const parsed = JSON.parse(match.jsonData);
-
-//       (parsed.innings || []).forEach((inning: any, index: number) => {
-//         let partnerships: any[] = [];
-//         let runs = 0, balls = 0, batsmen = '', fallOver = '';
-
-//         inning.overs.forEach((over: any) => {
-//           over.deliveries.forEach((delivery: any, ballIndex: number) => {
-//             if (runs === 0 && balls === 0) {
-//               batsmen = `${delivery.batter} - ${delivery.non_striker}`;
-//             }
-//             runs += delivery.runs?.total || 0;
-//             balls++;
-//             if (delivery.wickets && delivery.wickets.length > 0) {
-//               fallOver = `${over.over}.${ballIndex + 1}`;
-//               partnerships.push({ wicket: partnerships.length + 1, batsmen, runs, balls, fallOver });
-//               runs = 0;
-//               balls = 0;
-//             }
-//           });
-//         });
-
-//         if (runs > 0) {
-//           partnerships.push({ wicket: partnerships.length + 1, batsmen, runs, balls, fallOver: 'N/A' });
-//         }
-
-//         // Check if any of the first 5 wickets' runs < 18
-//         const firstFive = partnerships.slice(0, 5);
-//         const hasLowWicketRuns = firstFive.some(p => p.runs < 18);
-
-//         if (hasLowWicketRuns) {
-//           const failureMatch = {
-//             matchName: parsed.info?.teams?.join(' vs '),
-//             venue: parsed.info?.venue || '',
-//             inning: index + 1,
-//             partnerships: firstFive,
-//             collapsedTeam: parsed.info?.teams ? parsed.info.teams[index === 0 ? 0 : 1] : ''
-//           };
-//           this.lowWicketFailureMatches.push(failureMatch);
-
-//           // Count venue
-//           this.lowWicketVenueFailuresCount[failureMatch.venue] = (this.lowWicketVenueFailuresCount[failureMatch.venue] || 0) + 1;
-
-//           // Count team
-//           if (failureMatch.collapsedTeam) {
-//             this.lowWicketTeamFailuresCount[failureMatch.collapsedTeam] = (this.lowWicketTeamFailuresCount[failureMatch.collapsedTeam] || 0) + 1;
-//           }
-//         }
-//       });
-//     } catch (err) {
-//       console.error('Error parsing match JSON:', err);
-//     }
-//   });
-
-//   this.showLowWicketFailurePopup = true;
-// }
 
 openLowWicketFailures() {
   if (!this.selectedTournamentId || !this.selectedYear) {
@@ -876,5 +674,12 @@ teamFailuresKeys() {
 
 toggleFullScreen() {
   this.isFullScreen = !this.isFullScreen;
+}
+toggleMobileMenu() {
+  this.mobileMenuOpen = !this.mobileMenuOpen;
+}
+
+closeMobileMenu() {
+  this.mobileMenuOpen = false;
 }
 }

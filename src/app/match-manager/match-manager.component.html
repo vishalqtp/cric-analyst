@@ -1,55 +1,79 @@
-
-
-<!-- <div class="upload-section">
-  <h3>Upload Match JSON Files</h3>
-  <input type="file" (change)="onFilesSelected($event)" multiple webkitdirectory directory />
-  <button (click)="uploadFiles()" [disabled]="uploading">Upload</button>
-  <span class="message">{{uploadMessage}}</span>
-</div> -->
-
-<!-- <button (click)="checkLowPartnershipFailures()">Check Low Partnerships</button>
-<BR>
-  <BR> -->
-
-<!-- Filter section for browsing matches -->
-
-<!-- <nav class="top-nav">
-  <div class="nav-left">
-    <h1 class="site-title">Cricket Analytics Dashboard</h1>
-  </div>
-  <div class="nav-right">
-    <button class="btn btn-primary" (click)="openPartnershipFailures()">Check Partnership Failures</button>
-      <button class="btn btn-warning" (click)="openLowWicketFailures()" style="margin-left: 10px;">Check Low Wicket Runs Failures</button>
-  </div>
-</nav> -->
-
-
-
-
+<!-- Modern Cricket Analytics Dashboard HTML -->
 <nav class="top-nav">
-  <div class="nav-left">
-    <h1 class="site-title">Cricket Analytics Dashboard</h1>
-  </div>
-  <div class="nav-right">
-    <!-- Upload Button with Icon -->
-    <button class="btn btn-upload" (click)="toggleUploadModal()" [title]="'Upload Match Files'">
-      <svg class="upload-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
-        <polyline points="14,2 14,8 20,8"/>
-        <path d="M12 18v-6"/>
-        <path d="m9 15 3-3 3 3"/>
-      </svg>
-      <span class="upload-text">Upload</span>
-    </button>
+  <div class="nav-container">
+    <div class="nav-left">
+      <div class="logo-container">
+        <div class="logo-icon">
+          🏏
+        </div>
+        <h1 class="site-title">Cricket Analytics</h1>
+      </div>
+    </div>
     
-    <button class="btn btn-primary" (click)="openPartnershipFailures()">Check Partnership Failures</button>
-    <!-- <button class="btn btn-warning" (click)="openLowWicketFailures()" style="margin-left: 10px;">Check Low Wicket Runs Failures</button> -->
+    <!-- Desktop Navigation -->
+    <div class="nav-right desktop-nav">
+      <button class="btn btn-upload" (click)="toggleUploadModal()" [title]="'Upload Match Files'">
+        <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7,10 12,15 17,10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        <span>Upload</span>
+      </button>
+      
+      <button class="btn btn-primary" (click)="openPartnershipFailures()">
+        <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 12l2 2 4-4"/>
+          <circle cx="12" cy="12" r="10"/>
+        </svg>
+        Partnership Failures
+      </button>
+    </div>
+
+    <!-- Mobile Hamburger -->
+    <button class="hamburger mobile-only" (click)="toggleMobileMenu()" [class.active]="mobileMenuOpen">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+
+  <!-- Mobile Menu Overlay -->
+  <div class="mobile-menu-overlay" [class.active]="mobileMenuOpen" (click)="closeMobileMenu()">
+    <div class="mobile-menu" (click)="$event.stopPropagation()">
+      <div class="mobile-menu-header">
+        <h3>Menu</h3>
+        <button class="close-mobile-menu" (click)="closeMobileMenu()">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="mobile-menu-items">
+        <button class="mobile-menu-item" (click)="toggleUploadModal(); closeMobileMenu()">
+          <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7,10 12,15 17,10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Upload Files
+        </button>
+        <button class="mobile-menu-item" (click)="openPartnershipFailures(); closeMobileMenu()">
+          <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 12l2 2 4-4"/>
+            <circle cx="12" cy="12" r="10"/>
+          </svg>
+          Partnership Failures
+        </button>
+      </div>
+    </div>
   </div>
 </nav>
 
-<!-- Upload Modal/Dropdown -->
-<div class="upload-modal-overlay" *ngIf="showUploadModal" (click)="closeUploadModal()">
-  <div class="upload-modal" (click)="$event.stopPropagation()">
+<!-- Upload Modal -->
+<div class="modal-overlay" *ngIf="showUploadModal" (click)="closeUploadModal()">
+  <div class="modal-content upload-modal" (click)="$event.stopPropagation()">
     <div class="modal-header">
       <h3>Upload Match JSON Files</h3>
       <button class="close-btn" (click)="closeUploadModal()">
@@ -61,7 +85,7 @@
     </div>
     
     <div class="modal-body">
-      <div class="file-input-container">
+      <div class="file-upload-area">
         <input type="file" 
                id="fileInput"
                (change)="onFilesSelected($event)" 
@@ -69,26 +93,35 @@
                webkitdirectory 
                directory 
                class="file-input-hidden" />
-        <label for="fileInput" class="file-input-label">
-          <svg class="folder-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
-          </svg>
-          <span>Select Folder with JSON Files</span>
+        <label for="fileInput" class="file-upload-label">
+          <div class="upload-icon">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+            </svg>
+          </div>
+          <h4>Select Folder</h4>
+          <p>Choose a folder containing JSON files</p>
         </label>
       </div>
       
-      <div class="selected-files-info" *ngIf="selectedFiles.length > 0">
-        <p><strong>{{selectedFiles.length}}</strong> files selected</p>
-        <div class="file-list" *ngIf="selectedFiles.length <= 10">
+      <div class="selected-files" *ngIf="selectedFiles.length > 0">
+        <div class="files-count">
+          <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+            <polyline points="14,2 14,8 20,8"/>
+          </svg>
+          <span><strong>{{selectedFiles.length}}</strong> files selected</span>
+        </div>
+        <div class="file-preview" *ngIf="selectedFiles.length <= 10">
           <div class="file-item" *ngFor="let file of selectedFiles.slice(0, 5)">
-            <svg class="file-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg class="file-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
               <polyline points="14,2 14,8 20,8"/>
             </svg>
-            <span class="file-name">{{file.name}}</span>
+            <span>{{file.name}}</span>
           </div>
           <div *ngIf="selectedFiles.length > 5" class="more-files">
-            ...and {{selectedFiles.length - 5}} more files
+            +{{selectedFiles.length - 5}} more files
           </div>
         </div>
       </div>
@@ -100,8 +133,19 @@
         <p class="progress-text">{{uploadMessage}}</p>
       </div>
       
-      <div class="upload-message" *ngIf="uploadMessage && !uploading" [class.success]="uploadMessage.includes('successful')" [class.error]="uploadMessage.includes('failed')">
-        {{uploadMessage}}
+      <div class="upload-status" *ngIf="uploadMessage && !uploading" 
+           [class.success]="uploadMessage.includes('successful')" 
+           [class.error]="uploadMessage.includes('failed')">
+        <svg *ngIf="uploadMessage.includes('successful')" class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+          <polyline points="22,4 12,14.01 9,11.01"/>
+        </svg>
+        <svg *ngIf="uploadMessage.includes('failed')" class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="15" y1="9" x2="9" y2="15"/>
+          <line x1="9" y1="9" x2="15" y2="15"/>
+        </svg>
+        <span>{{uploadMessage}}</span>
       </div>
     </div>
     
@@ -110,429 +154,386 @@
         Cancel
       </button>
       <button class="btn btn-primary" (click)="uploadFiles()" [disabled]="uploading || selectedFiles.length === 0">
-        <svg *ngIf="uploading" class="loading-spinner" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg *ngIf="uploading" class="loading-spinner icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 12a9 9 0 11-6.219-8.56"/>
         </svg>
-        <span *ngIf="!uploading">Upload Files</span>
-        <span *ngIf="uploading">Uploading...</span>
+        <svg *ngIf="!uploading" class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7,10 12,15 17,10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        <span>{{uploading ? 'Uploading...' : 'Upload Files'}}</span>
       </button>
     </div>
   </div>
 </div>
-<!-- Then rest of your existing content -->
 
-<div class="filter-section">
-  <!-- your existing filters and browse matches here -->
-</div>
-
-
-<div class="filter-section">
-  <h3 class="filter-heading">Browse Matches</h3>
-
-  <div class="filter-grid">
-    <div class="filter-group">
-      <label for="tournament">Tournament</label>
-      <select id="tournament" [(ngModel)]="selectedTournamentId" (change)="onTournamentChange()">
-        <option [ngValue]="null" disabled selected>Select Tournament</option>
-        <option *ngFor="let t of tournaments" [value]="t.id">{{ t.name }}</option>
-      </select>
-    </div>
-
-    <div class="filter-group">
-      <label for="year">Year</label>
-      <select id="year" [(ngModel)]="selectedYear" (change)="onYearChange()" [disabled]="!selectedTournamentId">
-        <option [ngValue]="null" disabled selected>Select Year</option>
-        <option *ngFor="let y of years" [value]="y">{{ y }}</option>
-      </select>
-    </div>
-
-    
-    <div class="filter-group">
-      <label for="team">Team</label>
-      <select id="team" [(ngModel)]="selectedTeam" (change)="applyMatchFilters()" [disabled]="!selectedYear">
-        <option value="">All</option>
-        <option *ngFor="let t of availableTeams" [value]="t">{{ t }}</option>
-      </select>
-    </div>
-
-    <div class="filter-group">
-      <label for="venue">Venue</label>
-      <select id="venue" [(ngModel)]="selectedVenue" (change)="applyMatchFilters()" [disabled]="!selectedYear">
-        <option value="">All</option>
-        <option *ngFor="let v of availableVenues" [value]="v">{{ v }}</option>
-      </select>
-    </div>
-
-  
-
-    <div class="filter-group">
-      <label for="match">Match</label>
-      <select id="match" [(ngModel)]="selectedMatchId" (change)="onMatchChange()" [disabled]="!selectedYear">
-        <option [ngValue]="null" disabled selected>Select Match</option>
-        <option *ngFor="let m of matches" [value]="m.id">
-          {{ m.teams ? (m.teams[0] + ' vs ' + m.teams[1]) : m.matchId }}
-        </option>
-      </select>
-    </div>
-
-    <div class="filter-group">
-      <label for="viewType">View Type</label>
-      <select id="viewType" [(ngModel)]="selectedViewType" (change)="onViewTypeChange()" [disabled]="!selectedMatchId">
-<option [ngValue]="null" disabled>Select View</option>
-        <option value="partnership">Partnership</option>
-        <option value="scorecard">Scorecard</option>
-      </select>
-    </div>
-
-   
-
-  </div>
-</div>
-
-
-
-<!-- Full width centered match summary if NOT partnership view -->
-<div *ngIf="matchDetails && selectedViewType !== 'partnership'" class="match-summary-centered">
-  <div class="match-summary-card">
-    <div class="teams">
-      <div class="team">{{ matchDetails.info.teams[0] }}</div>
-      <div class="vs">vs</div>
-      <div class="team">{{ matchDetails.info.teams[1] }}</div>
-    </div>
-
-    <div class="team-scores">
-  <div class="score-box">
-    <p *ngFor="let score of getTeamScores(); let i = index" [ngClass]="{ 'team-a': i === 0, 'team-b': i === 1 }">
-      {{ score }}
-    </p>
-  </div>
-</div>
-
-
-    <div class="match-result" [ngClass]="{'win': isWinner(), 'loss': !isWinner()}">
-      {{ matchResult }}
-    </div>
-
-    <div class="match-info">
-      <p><strong>Venue:</strong> {{ matchDetails.info.venue }}, {{ matchDetails.info.city }}</p>
-      <p><strong>Date:</strong> {{ matchDetails.info.dates[0] | date: 'd MMM yyyy' }}</p>
-      <p><strong>Toss:</strong> {{ matchDetails.info.toss.winner }} chose to {{ matchDetails.info.toss.decision }}</p>
-      <p><strong>Overs:</strong> {{ matchDetails.info.overs }} overs</p>
-    </div>
-  </div>
-</div>
-
-<!-- Side-by-side match summary + partnerships when partnership view -->
-<div *ngIf="matchDetails && selectedViewType === 'partnership'" class="side-by-side-container">
-  <div class="left-column">
-    <div class="match-summary-card compact">
-      <div class="teams">
-        <div class="team">{{ matchDetails.info.teams[0] }}</div>
-        <div class="vs">vs</div>
-        <div class="team">{{ matchDetails.info.teams[1] }}</div>
+<!-- Main Content -->
+<div class="main-container">
+  <div class="filters-section">
+    <div class="section-header">
+      <div class="header-content">
+        <svg class="section-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <h2>Browse Matches</h2>
       </div>
-     
-
-  <div class="team-scores">
-  <div class="score-box">
-    <p *ngFor="let score of getTeamScores(); let i = index" [ngClass]="{ 'team-a': i === 0, 'team-b': i === 1 }">
-      {{ score }}
-    </p>
-  </div>
-</div>
-      <div class="match-result" [ngClass]="{'win': isWinner(), 'loss': !isWinner()}">
-        {{ matchResult }}
-      </div>
-
-      <div class="match-info">
-        <p><strong>Venue:</strong> {{ matchDetails.info.venue }}, {{ matchDetails.info.city }}</p>
-        <p><strong>Date:</strong> {{ matchDetails.info.dates[0] | date: 'd MMM yyyy' }}</p>
-        <p><strong>Toss:</strong> {{ matchDetails.info.toss.winner }} chose to {{ matchDetails.info.toss.decision }}</p>
-        <p><strong>Overs:</strong> {{ matchDetails.info.overs }} overs</p>
-      </div>
-
-     
     </div>
 
-    <!-- Partnership Summary BELOW match summary in left column -->
-    <div class="partnership-summary-left">
-      <h3>Partnership Summary</h3>
-      <hr />
-      <div class="partnership-summary-items">
-        <div *ngFor="let key of [20, 25, 30, 35, 40, 45, 50]">
-          {{ key }}+ runs partnership: {{ partnershipSummary[key] || 0 }}
+    <div class="filters-grid">
+      <div class="filter-group">
+        <label for="tournament">Tournament</label>
+        <div class="select-wrapper">
+          <select id="tournament" [(ngModel)]="selectedTournamentId" (change)="onTournamentChange()">
+            <option [ngValue]="null" disabled selected>Select Tournament</option>
+            <option *ngFor="let t of tournaments" [value]="t.id">{{ t.name }}</option>
+          </select>
+          <svg class="select-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6,9 12,15 18,9"/>
+          </svg>
         </div>
       </div>
-    </div>
-  </div>
 
-  <div class="right-column">
-    <div class="partnership-section">
-      <h3>Partnership Tracker</h3>
-      <div class="inning-selector">
-  <label for="inningDropdown"><strong>Select Inning:</strong></label>
-  <select id="inningDropdown" [(ngModel)]="selectedInningIndex" (change)="generatePartnerships()">
-    <option *ngFor="let inn of availableInnings; let idx = index" [value]="idx">{{ inn }}</option>
-  </select>
-</div>
-      <table class="partnership-table" role="table" aria-label="Partnerships">
-    
-
-        <thead>
-          <tr>
-            <th>Wicket</th>
-            <th>Batsmen</th>
-            <th>Runs (Balls)</th>
-            <th>Fall Over</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let p of partnerships; let i = index" [class.milestone]="p.runs >= 24">
-            <td>{{ getWicketLabel(i) }}</td>
-            <td>{{ p.batsmen }}</td>
-            <td>{{ p.runs }} ({{ p.balls }})</td>
-            <td>{{ p.fallOver }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  
-
-  <div *ngIf="showFailurePopup" class="modal-overlay">
-  <div class="modal-content">
-    <h2>Partnership Failures</h2>
-    <div *ngIf="failureMatches.length === 0">
-      <p>No failures found for selected tournament & year.</p>
-    </div>
-    <div *ngFor="let match of failureMatches">
-      <h3>
-        {{ match.matchName }} - {{ match.venue }} (Inning {{ match.inning }})
-                </h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Wicket</th>
-            <th>Batsmen</th>
-            <th>Runs</th>
-            <th>Fall Over</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let p of match.partnerships">
-            <td>{{ p.wicket }}</td>
-            <td>{{ p.batsmen }}</td>
-            <td>{{ p.runs }}</td>
-            <td>{{ p.fallOver }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <button (click)="showFailurePopup = false">Close</button>
-  </div>
-</div>
-</div>
-
-
-
-
-<div *ngIf="showFailurePopup" class="modal-overlay">
-  <div class="modal-content">
-    <div class="modal-header">
-  <div>
-    <h2>Partnership Failures</h2>
-    <p class="modal-subtitle">
-      Tournament: {{ selectedTournamentName }} | Year: {{ selectedYear || 'N/A' }}
-    </p>
-  </div>
-  <button type="button" class="modal-close-btn" aria-label="Close" (click)="showFailurePopup = false">×</button>
-</div>
-
-    <div class="modal-body">
+      <div class="filter-group">
+        <label for="year">Year</label>
+        <div class="select-wrapper">
+          <select id="year" [(ngModel)]="selectedYear" (change)="onYearChange()" [disabled]="!selectedTournamentId">
+            <option [ngValue]="null" disabled selected>Select Year</option>
+            <option *ngFor="let y of years" [value]="y">{{ y }}</option>
+          </select>
+          <svg class="select-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6,9 12,15 18,9"/>
+          </svg>
+        </div>
+      </div>
       
-<div class="failure-summary">
-  <div class="summary-item">
-    <span class="label">Total Matches</span>
-    <span class="value">{{ allMatches.length || 0 }}</span>
-  </div>
-  <div class="summary-item">
-    <span class="label">Failures</span>
-    <span class="value">{{ failureMatches.length }}</span>
-  </div>
-  <div class="summary-item">
-    <span class="label">1st Inn.</span>
-    <span class="value">{{ countFailuresByInning(1) }}</span>
-  </div>
-  <div class="summary-item">
-    <span class="label">2nd Inn.</span>
-    <span class="value">{{ countFailuresByInning(2) }}</span>
-  </div>
-  <div class="summary-item">
-    <span class="label">Failure %</span>
-    <span class="value">{{ ((failureMatches.length / (allMatches.length || 1)) * 100) | number:'1.0-2' }}%</span>
-  </div>
-</div>
-<div class="failure-extra-summary" *ngIf="failureMatches.length > 0">
-  <div class="summary-section venue-section">
-    <h4>Failure Venues</h4>
-    <ul>
-      <li *ngFor="let venue of venueFailuresKeys()">
-        <span class="label">{{ venue }}</span>
-        <span class="value">
-          {{ venueFailuresCount[venue] }} match{{ venueFailuresCount[venue] > 1 ? 'es' : '' }}
-        </span>
-      </li>
-    </ul>
+      <div class="filter-group">
+        <label for="team">Team</label>
+        <div class="select-wrapper">
+          <select id="team" [(ngModel)]="selectedTeam" (change)="applyMatchFilters()" [disabled]="!selectedYear">
+            <option value="">All Teams</option>
+            <option *ngFor="let t of availableTeams" [value]="t">{{ t }}</option>
+          </select>
+          <svg class="select-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6,9 12,15 18,9"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <label for="venue">Venue</label>
+        <div class="select-wrapper">
+          <select id="venue" [(ngModel)]="selectedVenue" (change)="applyMatchFilters()" [disabled]="!selectedYear">
+            <option value="">All Venues</option>
+            <option *ngFor="let v of availableVenues" [value]="v">{{ v }}</option>
+          </select>
+          <svg class="select-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6,9 12,15 18,9"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <label for="match">Match</label>
+        <div class="select-wrapper">
+          <select id="match" [(ngModel)]="selectedMatchId" (change)="onMatchChange()" [disabled]="!selectedYear">
+            <option [ngValue]="null" disabled selected>Select Match</option>
+            <option *ngFor="let m of matches" [value]="m.id">
+              {{ m.teams ? (m.teams[0] + ' vs ' + m.teams[1]) : m.matchId }}
+            </option>
+          </select>
+          <svg class="select-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6,9 12,15 18,9"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <label for="viewType">View Type</label>
+        <div class="select-wrapper">
+          <select id="viewType" [(ngModel)]="selectedViewType" (change)="onViewTypeChange()" [disabled]="!selectedMatchId">
+            <option [ngValue]="null" disabled>Select View</option>
+            <option value="partnership">Partnership</option>
+            <option value="scorecard">Scorecard</option>
+          </select>
+          <svg class="select-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6,9 12,15 18,9"/>
+          </svg>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="summary-section team-section">
-    <h4>Teams Collapsed</h4>
-    <ul>
-      <li *ngFor="let team of teamFailuresKeys()">
-        <span class="label">{{ team }}</span>
-        <span class="value">
-          {{ teamFailuresCount[team] }} match{{ teamFailuresCount[team] > 1 ? 'es' : '' }}
-        </span>
-      </li>
-    </ul>
+  <!-- Match Details Section -->
+  <div *ngIf="matchDetails && selectedViewType !== 'partnership'" class="match-summary-section">
+    <div class="match-card">
+      <div class="match-header">
+        <div class="teams-display">
+          <div class="team">{{ matchDetails.info.teams[0] }}</div>
+          <div class="vs-badge">VS</div>
+          <div class="team">{{ matchDetails.info.teams[1] }}</div>
+        </div>
+        <div class="match-result" [class.win]="isWinner()" [class.loss]="!isWinner()">
+          {{ matchResult }}
+        </div>
+      </div>
+
+      <div class="scores-container">
+        <div class="score-item" *ngFor="let score of getTeamScores(); let i = index" [class.team-a]="i === 0" [class.team-b]="i === 1">
+          {{ score }}
+        </div>
+      </div>
+
+      <div class="match-details">
+        <div class="detail-item">
+          <svg class="detail-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
+          <span><strong>Venue:</strong> {{ matchDetails.info.venue }}, {{ matchDetails.info.city }}</span>
+        </div>
+        <div class="detail-item">
+          <svg class="detail-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+          <span><strong>Date:</strong> {{ matchDetails.info.dates[0] | date: 'd MMM yyyy' }}</span>
+        </div>
+        <div class="detail-item">
+          <svg class="detail-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M12 1v6m0 6v6"/>
+          </svg>
+          <span><strong>Toss:</strong> {{ matchDetails.info.toss.winner }} chose to {{ matchDetails.info.toss.decision }}</span>
+        </div>
+        <div class="detail-item">
+          <svg class="detail-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12,6 12,12 16,14"/>
+          </svg>
+          <span><strong>Overs:</strong> {{ matchDetails.info.overs }} overs</span>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
 
+  <!-- Partnership View -->
+  <div *ngIf="matchDetails && selectedViewType === 'partnership'" class="partnership-layout">
+    <div class="partnership-sidebar">
+      <div class="match-card compact">
+        <div class="match-header">
+          <div class="teams-display">
+            <div class="team">{{ matchDetails.info.teams[0] }}</div>
+            <div class="vs-badge">VS</div>
+            <div class="team">{{ matchDetails.info.teams[1] }}</div>
+          </div>
+          <div class="match-result" [class.win]="isWinner()" [class.loss]="!isWinner()">
+            {{ matchResult }}
+          </div>
+        </div>
 
+        <div class="scores-container">
+          <div class="score-item" *ngFor="let score of getTeamScores(); let i = index" [class.team-a]="i === 0" [class.team-b]="i === 1">
+            {{ score }}
+          </div>
+        </div>
 
-<h2 class="failure-details-heading">Match Failure Details</h2>
+        <div class="match-details">
+          <div class="detail-item">
+            <svg class="detail-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+              <circle cx="12" cy="10" r="3"/>
+            </svg>
+            <span>{{ matchDetails.info.venue }}, {{ matchDetails.info.city }}</span>
+          </div>
+          <div class="detail-item">
+            <svg class="detail-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+            <span>{{ matchDetails.info.dates[0] | date: 'd MMM yyyy' }}</span>
+          </div>
+        </div>
+      </div>
 
+      <div class="partnership-summary">
+        <h3>Partnership Milestones</h3>
+        <div class="milestone-stats">
+          <div class="milestone-item" *ngFor="let key of [20, 25, 30, 35, 40, 45, 50]">
+            <div class="milestone-number">{{ partnershipSummary[key] || 0 }}</div>
+            <div class="milestone-label">{{ key }}+ runs</div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-      <div *ngFor="let match of failureMatches" class="failure-match">
-<h3 class="failure-match-heading">
-    {{ match.matchName }} - {{ match.venue }} (Inning {{ match.inning }})
-  </h3>    
-<p class="batting-team-label">
-  Batting Team: <span>{{ match.collapsedTeam }}</span>
-</p>
+    <div class="partnership-main">
+      <div class="partnership-section">
+        <div class="section-header">
+          <h3>Partnership Tracker</h3>
+          <div class="inning-selector">
+            <label for="inningDropdown">Inning:</label>
+            <div class="select-wrapper">
+              <select id="inningDropdown" [(ngModel)]="selectedInningIndex" (change)="generatePartnerships()">
+                <option *ngFor="let inn of availableInnings; let idx = index" [value]="idx">{{ inn }}</option>
+              </select>
+              <svg class="select-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6,9 12,15 18,9"/>
+              </svg>
+            </div>
+          </div>
+        </div>
 
-  <table class="failure-table">
-          <thead>
-            <tr>
-              <th>Wicket</th>
-              <th>Batsmen</th>
-              <th>Runs</th>
-              <th>Fall Over</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let p of match.partnerships">
-              <td>{{ p.wicket }}</td>
-              <td>{{ p.batsmen }}</td>
-              <td>{{ p.runs }}</td>
-              <td>{{ p.fallOver }}</td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="partnership-table-container">
+          <table class="partnership-table">
+            <thead>
+              <tr>
+                <th>Wicket</th>
+                <th>Batsmen</th>
+                <th>Runs (Balls)</th>
+                <th>Fall Over</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let p of partnerships; let i = index" [class.milestone]="p.runs >= 24">
+                <td>
+                  <div class="wicket-badge">{{ getWicketLabel(i) }}</div>
+                </td>
+                <td class="batsmen-cell">{{ p.batsmen }}</td>
+                <td>
+                  <div class="runs-info">
+                    <span class="runs">{{ p.runs }}</span>
+                    <span class="balls">({{ p.balls }})</span>
+                  </div>
+                </td>
+                <td>{{ p.fallOver }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-
-
-<div *ngIf="showLowWicketFailurePopup" class="modal-overlay">
-  <div class="modal-content">
+<!-- Partnership Failures Modal -->
+<div *ngIf="showFailurePopup" class="modal-overlay">
+  <div class="modal-content failure-modal">
     <div class="modal-header">
-      <h2>Low Wicket Runs Failures</h2>
-      <button class="modal-close-btn" aria-label="Close modal" (click)="showLowWicketFailurePopup = false">×</button>
+      <div class="header-info">
+        <h2>Partnership Failures</h2>
+        <p class="subtitle">{{ selectedTournamentName }} | {{ selectedYear || 'N/A' }}</p>
+      </div>
+      <button class="close-btn" (click)="showFailurePopup = false">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
     </div>
 
     <div class="modal-body">
-      <div class="failure-summary">
-        <div class="summary-item">
-          <span class="label">Total Matches</span>
-          <span class="value">{{ allMatches.length || 0 }}</span>
+      <div class="failure-stats">
+        <div class="stat-card">
+          <div class="stat-value">{{ allMatches.length || 0 }}</div>
+          <div class="stat-label">Total Matches</div>
         </div>
-        <div class="summary-item">
-          <span class="label">Failures</span>
-          <span class="value">{{ lowWicketFailureMatches.length }}</span>
+        <div class="stat-card failure">
+          <div class="stat-value">{{ failureMatches.length }}</div>
+          <div class="stat-label">Failures</div>
         </div>
-        <div class="summary-item">
-          <span class="label">1st Inn.</span>
-          <span class="value">{{ countLowWicketFailuresByInning(1) }}</span>
+        <div class="stat-card">
+          <div class="stat-value">{{ countFailuresByInning(1) }}</div>
+          <div class="stat-label">1st Innings</div>
         </div>
-        <div class="summary-item">
-          <span class="label">2nd Inn.</span>
-          <span class="value">{{ countLowWicketFailuresByInning(2) }}</span>
+        <div class="stat-card">
+          <div class="stat-value">{{ countFailuresByInning(2) }}</div>
+          <div class="stat-label">2nd Innings</div>
         </div>
-        <div class="summary-item">
-          <span class="label">Failure %</span>
-          <span class="value">{{ ((lowWicketFailureMatches.length / (allMatches.length || 1)) * 100) | number:'1.0-2' }}%</span>
-        </div>
-      </div>
-
-      <div class="failure-extra-summary" *ngIf="lowWicketFailureMatches.length > 0">
-        <div class="summary-section venue-section">
-          <h4>Failure Venues</h4>
-          <ul>
-            <li *ngFor="let venue of lowWicketVenueFailuresKeys()">
-              <span class="label">{{ venue }}</span>
-              <span class="value">
-                {{ lowWicketVenueFailuresCount[venue] }} match{{ lowWicketVenueFailuresCount[venue] > 1 ? 'es' : '' }}
-              </span>
-            </li>
-          </ul>
-        </div>
-
-        <div class="summary-section team-section">
-          <h4>Teams Collapsed</h4>
-          <ul>
-            <li *ngFor="let team of lowWicketTeamFailuresKeys()">
-              <span class="label">{{ team }}</span>
-              <span class="value">
-                {{ lowWicketTeamFailuresCount[team] }} match{{ lowWicketTeamFailuresCount[team] > 1 ? 'es' : '' }}
-              </span>
-            </li>
-          </ul>
+        <div class="stat-card percentage">
+          <div class="stat-value">{{ ((failureMatches.length / (allMatches.length || 1)) * 100) | number:'1.0-2' }}%</div>
+          <div class="stat-label">Failure Rate</div>
         </div>
       </div>
 
-      <h2 class="failure-details-heading">Match Failure Details</h2>
+      <div class="failure-breakdown" *ngIf="failureMatches.length > 0">
+        <div class="breakdown-section">
+          <h4>Top Failure Venues</h4>
+          <div class="breakdown-list">
+            <div class="breakdown-item" *ngFor="let venue of venueFailuresKeys().slice(0, 5)">
+              <span class="item-name">{{ venue }}</span>
+              <span class="item-count">{{ venueFailuresCount[venue] }}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="breakdown-section">
+          <h4>Teams Most Affected</h4>
+          <div class="breakdown-list">
+            <div class="breakdown-item" *ngFor="let team of teamFailuresKeys().slice(0, 5)">
+              <span class="item-name">{{ team }}</span>
+              <span class="item-count">{{ teamFailuresCount[team] }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
 
-      <div *ngFor="let match of lowWicketFailureMatches" class="failure-match">
-        <h3 class="failure-match-heading">
-          {{ match.matchName }} - {{ match.venue }} (Inning {{ match.inning }})
-        </h3>
-
-        <p><strong>Batting Team:</strong> {{ match.collapsedTeam }}</p>
-
-        <table class="failure-table">
-          <thead>
-            <tr>
-              <th>Wicket</th>
-              <th>Batsmen</th>
-              <th>Runs</th>
-              <th>Fall Over</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let p of match.partnerships">
-              <td>{{ p.wicket }}</td>
-              <td>{{ p.batsmen }}</td>
-              <td>{{ p.runs }}</td>
-              <td>{{ p.fallOver }}</td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="failure-matches">
+        <h3>Match Details</h3>
+        <div class="failure-match" *ngFor="let match of failureMatches">
+          <div class="failure-match-header">
+            <h4>{{ match.matchName }} - {{ match.venue }}</h4>
+            <div class="match-meta">
+              <span class="inning-badge">Inning {{ match.inning }}</span>
+              <span class="batting-team">{{ match.collapsedTeam }}</span>
+            </div>
+          </div>
+          
+          <div class="failure-table-container">
+            <table class="failure-table">
+              <thead>
+                <tr>
+                  <th>Wicket</th>
+                  <th>Batsmen</th>
+                  <th>Runs</th>
+                  <th>Fall Over</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let p of match.partnerships">
+                  <td>{{ p.wicket }}</td>
+                  <td class="batsmen-cell">{{ p.batsmen }}</td>
+                  <td>{{ p.runs }}</td>
+                  <td>{{ p.fallOver }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-
-<!-- Custom Alert Popup -->
-<div *ngIf="showAlert" class="custom-alert-overlay">
-  <div class="custom-alert-box">
-    <h3 class="alert-heading">Warning</h3>
-    <p class="alert-message">{{ alertMessage }}</p>
-    <button class="alert-ok-btn" (click)="closeAlert()">OK</button>
+<!-- Custom Alert Modal -->
+<div *ngIf="showAlert" class="modal-overlay">
+  <div class="modal-content alert-modal">
+    <div class="alert-content">
+      <div class="alert-icon">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+          <line x1="12" y1="9" x2="12" y2="13"/>
+          <line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+      </div>
+      <h3>Warning</h3>
+      <p>{{ alertMessage }}</p>
+      <button class="btn btn-primary" (click)="closeAlert()">OK</button>
+    </div>
   </div>
 </div>
-
