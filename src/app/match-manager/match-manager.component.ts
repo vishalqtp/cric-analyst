@@ -675,11 +675,35 @@ teamFailuresKeys() {
 toggleFullScreen() {
   this.isFullScreen = !this.isFullScreen;
 }
+// toggleMobileMenu() {
+//   this.mobileMenuOpen = !this.mobileMenuOpen;
+// }
+
+// closeMobileMenu() {
+//   this.mobileMenuOpen = false;
+// }
+
+
+
 toggleMobileMenu() {
   this.mobileMenuOpen = !this.mobileMenuOpen;
+  // Add body scroll prevention for iOS
+  if (this.mobileMenuOpen) {
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed'; // Additional fix for iOS
+    document.body.style.width = '100%'; // Additional fix for iOS
+  } else {
+    document.body.style.overflow = '';
+    document.body.style.position = '';
+    document.body.style.width = '';
+  }
 }
 
 closeMobileMenu() {
   this.mobileMenuOpen = false;
+  // Reset body styles
+  document.body.style.overflow = '';
+  document.body.style.position = '';
+  document.body.style.width = '';
 }
 }
