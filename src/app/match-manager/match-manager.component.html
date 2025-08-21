@@ -9,7 +9,6 @@
         <h1 class="site-title">Cricket Analytics</h1>
       </div>
     </div>
-    
     <!-- Desktop Navigation -->
     <div class="nav-right desktop-nav">
       <button class="btn btn-upload" (click)="toggleUploadModal()" [title]="'Upload Match Files'">
@@ -20,7 +19,6 @@
         </svg>
         <span>Upload</span>
       </button>
-      
       <button class="btn btn-primary" (click)="openPartnershipFailures()">
         <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M9 12l2 2 4-4"/>
@@ -29,7 +27,6 @@
         Partnership Failures
       </button>
     </div>
-
     <!-- Mobile Hamburger -->
     <button class="hamburger mobile-only" (click)="toggleMobileMenu()" [class.active]="mobileMenuOpen">
       <span></span>
@@ -37,7 +34,6 @@
       <span></span>
     </button>
   </div>
-
   <!-- Mobile Menu Overlay -->
   <div class="mobile-menu-overlay" [class.active]="mobileMenuOpen" (click)="closeMobileMenu()">
     <div class="mobile-menu" (click)="$event.stopPropagation()">
@@ -70,6 +66,164 @@
     </div>
   </div>
 </nav>
+
+
+<!-- Parameter Selection Modal -->
+<!-- <div *ngIf="showParameterSelectionModal" class="modal-overlay">
+  <div class="modal-content parameter-selection-modal">
+    <div class="modal-header">
+      <div class="header-info">
+        <h2>Partnership Failure Analysis</h2>
+        <p class="subtitle">Configure analysis parameters</p>
+      </div>
+      <button class="close-btn" (click)="closeParameterSelectionModal()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <div class="parameter-section">
+        <div class="parameter-card">
+          <div class="parameter-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+          </div>
+          <div class="parameter-content">
+            <label for="runs-select" class="parameter-label">Minimum Runs Threshold</label>
+            <p class="parameter-description">Partnerships below this run count will be considered failures</p>
+            <select id="runs-select" class="parameter-select" [(ngModel)]="selectedRuns">
+              <option *ngFor="let run of runsOptions" [value]="run">{{ run }} runs</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="parameter-card">
+          <div class="parameter-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+              <line x1="3" y1="6" x2="21" y2="6"/>
+              <path d="m16 10-4 4-4-4"/>
+            </svg>
+          </div>
+          <div class="parameter-content">
+            <label for="wickets-select" class="parameter-label">Number of Wickets to Check</label>
+            <p class="parameter-description">Analyze partnerships from 1st wicket to selected wicket</p>
+            <select id="wickets-select" class="parameter-select" [(ngModel)]="selectedWickets">
+              <option *ngFor="let wicket of wicketsOptions" [value]="wicket">First {{ wicket }} wicket{{ wicket > 1 ? 's' : '' }}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="parameter-summary">
+        <div class="summary-card">
+          <h4>Analysis Summary</h4>
+          <p>Looking for innings where <strong>none of the first {{ selectedWickets }} partnerships</strong> reached <strong>{{ selectedRuns }} runs or more</strong>.</p>
+          <p class="summary-note">A partnership of exactly {{ selectedRuns }} runs or more will <em>not</em> be counted as a failure.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="closeParameterSelectionModal()">Cancel</button>
+      <button class="btn btn-primary" (click)="analyzePartnershipFailures()">
+        <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 12l2 2 4-4"/>
+          <circle cx="12" cy="12" r="10"/>
+        </svg>
+        Analyze Failures
+      </button>
+    </div>
+  </div>
+</div> -->
+
+
+<!-- Parameter Selection Modal -->
+<div *ngIf="showParameterSelectionModal" class="modal-overlay">
+  <div class="modal-content parameter-selection-modal">
+    <div class="modal-header">
+      <div class="header-info">
+        <h2>Partnership Failure Analysis</h2>
+        <p class="subtitle">Configure analysis parameters</p>
+      </div>
+      <button class="close-btn" (click)="closeParameterSelectionModal()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    
+    <!-- Loading State -->
+    <div *ngIf="loadingMatchesForAnalysis" class="modal-body loading-state">
+      <div class="loading-container">
+        <div class="loading-spinner"></div>
+        <h3>Loading Match Data...</h3>
+        <p>Please wait while we fetch the tournament data for analysis.</p>
+      </div>
+    </div>
+
+    <!-- Parameter Selection (when not loading) -->
+    <div *ngIf="!loadingMatchesForAnalysis" class="modal-body">
+      <div class="parameter-section">
+        <div class="parameter-card">
+          <!-- <div class="parameter-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+          </div> -->
+          <div class="parameter-content">
+            <label for="runs-select" class="parameter-label">Minimum Runs Threshold</label>
+            <p class="parameter-description">Partnerships below this run count will be considered failures</p>
+            <select id="runs-select" class="parameter-select" [(ngModel)]="selectedRuns">
+              <option *ngFor="let run of runsOptions" [value]="run">{{ run }} runs</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="parameter-card">
+          <!-- <div class="parameter-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+              <line x1="3" y1="6" x2="21" y2="6"/>
+              <path d="m16 10-4 4-4-4"/>
+            </svg>
+          </div> -->
+          <div class="parameter-content">
+            <label for="wickets-select" class="parameter-label">Number of Wickets to Check</label>
+            <p class="parameter-description">Analyze partnerships from 1st wicket to selected wicket</p>
+            <select id="wickets-select" class="parameter-select" [(ngModel)]="selectedWickets">
+              <option *ngFor="let wicket of wicketsOptions" [value]="wicket">First {{ wicket }} wicket{{ wicket > 1 ? 's' : '' }}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="parameter-summary">
+        <div class="summary-card">
+          <h4>Analysis Summary</h4>
+          <p>Looking for innings where <strong>none of the first {{ selectedWickets }} partnerships</strong> reached <strong>{{ selectedRuns }} runs or more</strong>.</p>
+          <p class="summary-note">A partnership of exactly {{ selectedRuns }} runs or more will <em>not</em> be counted as a failure.</p>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="!loadingMatchesForAnalysis" class="modal-footer">
+      <button class="btn btn-secondary" (click)="closeParameterSelectionModal()">Cancel</button>
+      <button class="btn btn-primary" (click)="analyzePartnershipFailures()">
+        <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 12l2 2 4-4"/>
+          <circle cx="12" cy="12" r="10"/>
+        </svg>
+        Analyze Failures
+      </button>
+    </div>
+  </div>
+</div>
 
 <!-- Upload Modal -->
 <div class="modal-overlay" *ngIf="showUploadModal" (click)="closeUploadModal()">
@@ -170,102 +324,142 @@
 
 <!-- Main Content -->
 <div class="main-container">
-  <div class="filters-section">
-    <div class="section-header">
-      <div class="header-content">
-        <svg class="section-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="11" cy="11" r="8"/>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-        </svg>
-        <h2>Browse Matches</h2>
+<!-- Filters Section - Complete -->
+<div class="filters-section">
+  <div class="section-header">
+    <div class="header-content">
+      <svg class="section-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <h2>Browse Matches</h2>
+    </div>
+  </div>
+
+  <!-- Filters Grid -->
+  <div class="filters-grid">
+    <!-- Tournament Filter -->
+    <div class="filter-group">
+      <label for="tournament">Tournament</label>
+      <div class="select-wrapper" [class.loading]="loadingTournaments">
+        <select id="tournament" [(ngModel)]="selectedTournamentId" (change)="onTournamentChange()" [disabled]="loadingTournaments || tournaments.length === 0">
+          <option [ngValue]="null" disabled selected>{{ getTournamentPlaceholder() }}</option>
+          <option *ngFor="let t of tournaments" [value]="t.id">{{ t.name }}</option>
+        </select>
+        <div class="select-icon">
+          <svg *ngIf="!loadingTournaments" class="select-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6,9 12,15 18,9"/>
+          </svg>
+          <div *ngIf="loadingTournaments" class="mini-spinner"></div>
+        </div>
       </div>
     </div>
 
-    <div class="filters-grid">
-      <div class="filter-group">
-        <label for="tournament">Tournament</label>
-        <div class="select-wrapper">
-          <select id="tournament" [(ngModel)]="selectedTournamentId" (change)="onTournamentChange()">
-            <option [ngValue]="null" disabled selected>Select Tournament</option>
-            <option *ngFor="let t of tournaments" [value]="t.id">{{ t.name }}</option>
-          </select>
-          <svg class="select-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Year Filter -->
+    <div class="filter-group">
+      <label for="year">Year</label>
+      <div class="select-wrapper" [class.loading]="loadingYears">
+        <select id="year" [(ngModel)]="selectedYear" (change)="onYearChange()" [disabled]="!selectedTournamentId || loadingYears || years.length === 0">
+          <option [ngValue]="null" disabled selected>{{ getYearPlaceholder() }}</option>
+          <option *ngFor="let y of years" [value]="y">{{ y }}</option>
+        </select>
+        <div class="select-icon">
+          <svg *ngIf="!loadingYears" class="select-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="6,9 12,15 18,9"/>
           </svg>
+          <div *ngIf="loadingYears" class="mini-spinner"></div>
         </div>
       </div>
+    </div>
 
-      <div class="filter-group">
-        <label for="year">Year</label>
-        <div class="select-wrapper">
-          <select id="year" [(ngModel)]="selectedYear" (change)="onYearChange()" [disabled]="!selectedTournamentId">
-            <option [ngValue]="null" disabled selected>Select Year</option>
-            <option *ngFor="let y of years" [value]="y">{{ y }}</option>
-          </select>
-          <svg class="select-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Team Filter -->
+    <div class="filter-group">
+      <label for="team">Team</label>
+      <div class="select-wrapper" [class.loading]="loadingMatches">
+        <select id="team" [(ngModel)]="selectedTeam" (change)="applyMatchFilters()" [disabled]="!selectedYear || loadingMatches || availableTeams.length === 0">
+          <option value="">{{ getTeamPlaceholder() }}</option>
+          <option *ngFor="let t of availableTeams" [value]="t">{{ t }}</option>
+        </select>
+        <div class="select-icon">
+          <svg *ngIf="!loadingMatches" class="select-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="6,9 12,15 18,9"/>
           </svg>
+          <div *ngIf="loadingMatches" class="mini-spinner"></div>
         </div>
       </div>
-      
-      <div class="filter-group">
-        <label for="team">Team</label>
-        <div class="select-wrapper">
-          <select id="team" [(ngModel)]="selectedTeam" (change)="applyMatchFilters()" [disabled]="!selectedYear">
-            <option value="">All Teams</option>
-            <option *ngFor="let t of availableTeams" [value]="t">{{ t }}</option>
-          </select>
-          <svg class="select-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="6,9 12,15 18,9"/>
-          </svg>
-        </div>
-      </div>
+    </div>
 
-      <div class="filter-group">
-        <label for="venue">Venue</label>
-        <div class="select-wrapper">
-          <select id="venue" [(ngModel)]="selectedVenue" (change)="applyMatchFilters()" [disabled]="!selectedYear">
-            <option value="">All Venues</option>
-            <option *ngFor="let v of availableVenues" [value]="v">{{ v }}</option>
-          </select>
-          <svg class="select-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Venue Filter -->
+    <div class="filter-group">
+      <label for="venue">Venue</label>
+      <div class="select-wrapper" [class.loading]="loadingMatches">
+        <select id="venue" [(ngModel)]="selectedVenue" (change)="applyMatchFilters()" [disabled]="!selectedYear || loadingMatches || availableVenues.length === 0">
+          <option value="">{{ getVenuePlaceholder() }}</option>
+          <option *ngFor="let v of availableVenues" [value]="v">{{ v }}</option>
+        </select>
+        <div class="select-icon">
+          <svg *ngIf="!loadingMatches" class="select-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="6,9 12,15 18,9"/>
           </svg>
+          <div *ngIf="loadingMatches" class="mini-spinner"></div>
         </div>
       </div>
+    </div>
 
-      <div class="filter-group">
-        <label for="match">Match</label>
-        <div class="select-wrapper">
-          <select id="match" [(ngModel)]="selectedMatchId" (change)="onMatchChange()" [disabled]="!selectedYear">
-            <option [ngValue]="null" disabled selected>Select Match</option>
-            <option *ngFor="let m of matches" [value]="m.id">
-              {{ m.teams ? (m.teams[0] + ' vs ' + m.teams[1]) : m.matchId }}
-            </option>
-          </select>
-          <svg class="select-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Match Filter -->
+    <div class="filter-group">
+      <label for="match">Match</label>
+      <div class="select-wrapper" [class.loading]="loadingMatches">
+        <select id="match" [(ngModel)]="selectedMatchId" (change)="onMatchChange()" [disabled]="!selectedYear || loadingMatches || matches.length === 0">
+          <option [ngValue]="null" disabled selected>{{ getMatchPlaceholder() }}</option>
+          <option *ngFor="let m of matches" [value]="m.id">
+            {{ m.teams ? (m.teams[0] + ' vs ' + m.teams[1]) : m.matchId }}
+          </option>
+        </select>
+        <div class="select-icon">
+          <svg *ngIf="!loadingMatches" class="select-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="6,9 12,15 18,9"/>
           </svg>
+          <div *ngIf="loadingMatches" class="mini-spinner"></div>
         </div>
       </div>
+    </div>
 
-      <div class="filter-group">
-        <label for="viewType">View Type</label>
-        <div class="select-wrapper">
-          <select id="viewType" [(ngModel)]="selectedViewType" (change)="onViewTypeChange()" [disabled]="!selectedMatchId">
-            <option [ngValue]="null" disabled>Select View</option>
-            <option value="partnership">Partnership</option>
-            <option value="scorecard">Scorecard</option>
-          </select>
-          <svg class="select-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <!-- View Type Filter -->
+    <div class="filter-group">
+      <label for="viewType">View Type</label>
+      <div class="select-wrapper" [class.loading]="loadingMatchDetails">
+        <select id="viewType" [(ngModel)]="selectedViewType" (change)="onViewTypeChange()" [disabled]="!selectedMatchId || loadingMatchDetails">
+          <option [ngValue]="null" disabled>{{ getViewTypePlaceholder() }}</option>
+          <option value="partnership">Partnership</option>
+          <option value="scorecard">Scorecard</option>
+        </select>
+        <div class="select-icon">
+          <svg *ngIf="!loadingMatchDetails" class="select-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="6,9 12,15 18,9"/>
           </svg>
+          <div *ngIf="loadingMatchDetails" class="mini-spinner"></div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Match Details Section -->
+  <!-- Clear Filters Section -->
+  <div class="filters-actions">
+    <button class="btn btn-clear-filters" (click)="clearAllFilters()" [disabled]="!hasActiveFilters()">
+      <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 6h18"/>
+        <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>
+        <path d="M10 11v6"/>
+        <path d="M14 11v6"/>
+      </svg>
+      Clear All Filters
+    </button>
+  </div>
+</div>
+
+<!-- Match Details Section -->
   <div *ngIf="matchDetails && selectedViewType !== 'partnership'" class="match-summary-section">
     <div class="match-card">
       <div class="match-header">
@@ -415,11 +609,11 @@
               </tr>
             </tbody>
           </table>
+ </div>
+      </div>
         </div>
       </div>
     </div>
-  </div>
-</div>
 
 <!-- Partnership Failures Modal -->
 <div *ngIf="showFailurePopup" class="modal-overlay">
@@ -428,6 +622,10 @@
       <div class="header-info">
         <h2>Partnership Failures</h2>
         <p class="subtitle">{{ selectedTournamentName }} | {{ selectedYear || 'N/A' }}</p>
+        <div class="analysis-params">
+          <span class="param-badge">{{ selectedRuns }}+ runs</span>
+          <span class="param-badge">First {{ selectedWickets }} wickets</span>
+        </div>
       </div>
       <button class="close-btn" (click)="showFailurePopup = false">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -471,7 +669,7 @@
             </div>
           </div>
         </div>
-        
+
         <div class="breakdown-section">
           <h4>Teams Most Affected</h4>
           <div class="breakdown-list">
@@ -493,7 +691,6 @@
               <span class="batting-team">{{ match.collapsedTeam }}</span>
             </div>
           </div>
-          
           <div class="failure-table-container">
             <table class="failure-table">
               <thead>
@@ -520,19 +717,22 @@
   </div>
 </div>
 
-<!-- Custom Alert Modal -->
+<!-- Alert Modal -->
 <div *ngIf="showAlert" class="modal-overlay">
   <div class="modal-content alert-modal">
-    <div class="alert-content">
-      <div class="alert-icon">
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
-          <line x1="12" y1="9" x2="12" y2="13"/>
-          <line x1="12" y1="17" x2="12.01" y2="17"/>
+    <div class="modal-header">
+      <h3>Notice</h3>
+      <button class="close-btn" (click)="closeAlert()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
         </svg>
-      </div>
-      <h3>Warning</h3>
+      </button>
+    </div>
+    <div class="modal-body">
       <p>{{ alertMessage }}</p>
+    </div>
+    <div class="modal-footer">
       <button class="btn btn-primary" (click)="closeAlert()">OK</button>
     </div>
   </div>
