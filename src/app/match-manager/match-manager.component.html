@@ -204,16 +204,15 @@
       </div>
 
       <div class="parameter-summary">
-        <div class="summary-card">
+        <!-- <div class="summary-card">
           <h4>Analysis Summary</h4>
           <p>Looking for innings where <strong>none of the first {{ selectedWickets }} partnerships</strong> reached <strong>{{ selectedRuns }} runs or more</strong>.</p>
           <p class="summary-note">A partnership of exactly {{ selectedRuns }} runs or more will <em>not</em> be counted as a failure.</p>
-        </div>
+        </div> -->
       </div>
     </div>
 
     <div *ngIf="!loadingMatchesForAnalysis" class="modal-footer">
-      <button class="btn btn-secondary" (click)="closeParameterSelectionModal()">Cancel</button>
       <button class="btn btn-primary" (click)="analyzePartnershipFailures()">
         <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M9 12l2 2 4-4"/>
@@ -221,6 +220,8 @@
         </svg>
         Analyze Failures
       </button>
+            <button class="btn btn-secondary" (click)="closeParameterSelectionModal()">Cancel</button>
+
     </div>
   </div>
 </div>
