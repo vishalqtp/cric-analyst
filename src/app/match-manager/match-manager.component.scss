@@ -37,11 +37,15 @@ body {
   justify-content: space-between;
   align-items: center;
   height: 70px;
+    width: 100%; /* Add this to ensure full width usage */
+
 }
 
 .nav-left {
   display: flex;
   align-items: center;
+    flex: 0 0 auto; /* Prevent shrinking */
+
 }
 
 .logo-container {
@@ -73,6 +77,8 @@ body {
   display: flex;
   gap: 1rem;
   align-items: center;
+    flex: 0 0 auto; /* Prevent shrinking */
+  margin-left: auto; /* Push to far right */
 }
 
 /* Desktop navigation - visible on tablets and larger */

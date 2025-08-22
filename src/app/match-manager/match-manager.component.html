@@ -29,10 +29,10 @@
     </div>
     <!-- Mobile Hamburger -->
     <button class="hamburger mobile-only" (click)="toggleMobileMenu()" [class.active]="mobileMenuOpen">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
+  <span></span>
+  <span></span>
+  <span></span>
+</button>
   </div>
   <!-- Mobile Menu Overlay -->
   <div class="mobile-menu-overlay" [class.active]="mobileMenuOpen" (click)="closeMobileMenu()">
@@ -328,12 +328,11 @@
 <div class="filters-section">
   <div class="section-header">
     <div class="header-content">
-      <svg class="section-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <!-- <svg class="section-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="11" cy="11" r="8"/>
         <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-      </svg>
-      <h2>Browse Matches</h2>
-    </div>
+      </svg> -->
+<h2 style="font-size: 1.3rem; background: linear-gradient(135deg, #3b82f6, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; color: transparent;">Browse Matches</h2>    </div>
   </div>
 
   <!-- Filters Grid -->
@@ -445,7 +444,7 @@
   </div>
 
   <!-- Clear Filters Section -->
-  <div class="filters-actions">
+  <!-- <div class="filters-actions">
     <button class="btn btn-clear-filters" (click)="clearAllFilters()" [disabled]="!hasActiveFilters()">
       <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M3 6h18"/>
@@ -456,7 +455,7 @@
       </svg>
       Clear All Filters
     </button>
-  </div>
+  </div> -->
 </div>
 
 <!-- Match Details Section -->
