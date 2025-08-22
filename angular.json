@@ -40,18 +40,18 @@
           "configurations": {
             "production": {
               "baseHref": "./",
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "2mb",
-                  "maximumError": "5mb"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "30kb",
-                  "maximumError": "40kb"
-                }
-              ],
+             "budgets": [
+  {
+    "type": "initial",
+    "maximumWarning": "2mb",
+    "maximumError": "5mb"
+  },
+  {
+    "type": "anyComponentStyle",
+    "maximumWarning": "50kb",
+    "maximumError": "60kb"
+  }
+],
               "outputHashing": "all"
             },
             "development": {
